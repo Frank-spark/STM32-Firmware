@@ -111,6 +111,141 @@ STM32_Firmware_Project/
 ├── main.cpp              # Main application logic
 └── README.md             # Project documentation
 ```
+Using the static IP as the identifier simplifies the system and ensures each STM32 device is uniquely identified based on its assigned network address. Here’s an updated explanation for the Socket.IO server maintainers to implement firmware hosting using static IPs as the identifier.
+
+---
+
+### **Firmware Hosting for STM32 Devices Using Static IPs**
+
+#### **Overview**
+The Socket.IO server will identify STM32 devices based on their **static IP addresses**. Each device will:
+1. Request its firmware update by sending its static IP.
+2. Download the appropriate firmware file based on its IP.
+
+This approach ensures that each STM32 device receives the correct firmware version for updates.
+
+---
+
+#### **Implementation on the Socket.IO Server**
+
+1. **Directory Structure for Firmware Files**:
+   - Organize firmware files using static IPs as directory names.
+   - Example directory structure:
+     ```
+     firmware/
+     ├── 192.168.1.100/
+     │   ├── firmware_v1.0.bin
+     │   └── firmware_v1.1.bin
+     ├── 192.168.1.101/
+     │   ├── firmware_v2.0.bin
+     │   └── firmware_v2.1.bin
+     └── 192.168.1.102/
+         ├── firmware_v3.0.bin
+         └── firmware_v3.1.bin
+     ```
+
+2. **Endpoint for Firmware Requests**:
+   - Define a REST API endpoint to serve firmware files based on the device's static IP.
+   - Example API route:
+     ```
+     GET /firmware/:ip/latest
+     ```
+   - The `ip` parameter corresponds to the device’s static IP.
+
+3. **Serving Firmware Based on IP**:
+   - Use the IP from the request to locate the firmware directory.
+   - Example in Node.js (Express):
+     ```javascript
+     const express = require('express');
+     const path = require('path');
+     const app = express();
+
+     // Define firmware directory
+     const firmwareDir = path.join(__dirname, 'firmware');
+
+     // Endpoint to get the latest firmware based on IP
+     app.get('/firmware/:ip/latest', (req, res) => {
+         const ip = req.params.ip.replace(/\./g, '_'); // Sanitize IP for folder name
+         const devicePath = path.join(firmwareDir, ip);
+
+         // Find the latest firmware file
+         const fs = require('fs');
+         fs.readdir(devicePath, (err, files) => {
+             if (err || !files || files.length === 0) {
+                 res.status(404).send('Firmware not found');
+                 return;
+             }
+
+             // Sort files to find the latest version (assumes versioned filenames)
+             const latestFirmware = files.sort().reverse()[0];
+             const firmwarePath = path.join(devicePath, latestFirmware);
+
+             // Send the firmware file
+             res.download(firmwarePath, latestFirmware, (err) => {
+                 if (err) {
+                     res.status(500).send('Error serving firmware');
+                 }
+             });
+         });
+     });
+
+     // Start the server
+     const PORT = 5000;
+     app.listen(PORT, () => {
+         console.log(`Firmware server running on port ${PORT}`);
+     });
+     ```
+
+4. **Socket.IO Communication**:
+   - Notify devices about available updates.
+   - Use the device’s IP to determine its firmware version.
+   - Example Socket.IO event:
+     ```javascript
+     io.on('connection', (socket) => {
+         socket.on('requestFirmwareUpdate', (data) => {
+             const { ip } = data; // Static IP of the STM32 device
+
+             // Check for firmware update
+             const firmwareAvailable = checkForFirmwareUpdate(ip); // Custom function
+             if (firmwareAvailable) {
+                 socket.emit('firmwareUpdate', {
+                     url: `http://your-server-ip:5000/firmware/${ip.replace(/\./g, '_')}/latest`,
+                 });
+             }
+         });
+     });
+     ```
+
+5. **STM32 Device Interaction**:
+   - Each STM32 device should:
+     1. Send its static IP to the Socket.IO server during connection.
+     2. Listen for the `firmwareUpdate` event containing the download URL.
+     3. Use the provided URL to download the firmware via HTTP.
+
+---
+
+#### **Example Workflow**
+1. **Device Initialization**:
+   - STM32 device connects to the server using its static IP.
+
+2. **Update Request**:
+   - The device sends its static IP and checks for updates.
+
+3. **Firmware Distribution**:
+   - The server responds with the firmware URL if an update is available.
+
+4. **Firmware Download**:
+   - The STM32 device downloads and applies the firmware.
+
+---
+
+#### **Benefits of Using Static IPs**
+- **Simplicity**: No need to maintain additional identifiers.
+- **Reliability**: Static IPs are easy to configure and unique within the network.
+- **Scalability**: The directory structure naturally scales with the number of devices.
+
+---
+
 
 ---
 
