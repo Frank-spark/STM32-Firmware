@@ -15,7 +15,7 @@ const uint32_t expectedChecksum = 0x12345678;    // Example checksum for validat
 
 // Global objects
 EthernetSetup ethernet(mac, ip);
-SocketIOClient socketIO("192.168.1.221", 5000, "/socket.io/?EIO=4");
+SocketIOClient socketIO("192.168.1.221", 5000, "/socket.io/?EIO=4");//replace with server IP
 OTWUpdate otwUpdater(firmwareSlotAddress, firmwareSize, hashStorageAddress);
 
 void setup() {
