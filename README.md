@@ -24,7 +24,7 @@ The project ensures reliable communication and update mechanisms, providing an e
    - JSON-based data exchange for control and monitoring.
 
 3. **Over-the-Wire Firmware Updates**:
-   - Firmware update using an SD card.
+   - Firmware update using onboard flash.
    - Hash validation to avoid unnecessary updates.
    - Automatic reboot into the updated application firmware.
 
@@ -243,6 +243,109 @@ This approach ensures that each STM32 device receives the correct firmware versi
 - **Simplicity**: No need to maintain additional identifiers.
 - **Reliability**: Static IPs are easy to configure and unique within the network.
 - **Scalability**: The directory structure naturally scales with the number of devices.
+
+---
+Here’s an updated section for your `README.md` file, explaining how the firmware is updated and checked using the onboard Flash memory.
+
+---
+
+### **Firmware Update Process**
+
+The firmware update mechanism leverages the STM32's onboard Flash memory to store and validate firmware during Over-the-Wire (OTW) updates. This ensures a robust and efficient update process without relying on external storage.
+
+#### **Key Components**
+1. **Firmware Slot**:
+   - A reserved area in the onboard Flash memory stores the new firmware during the update process.
+   - Example:
+     - **Firmware Slot Address**: `0x08080000`
+     - **Size**: 512 KB
+
+2. **Firmware Hash Storage**:
+   - A dedicated address in Flash memory stores the hash of the currently running firmware.
+   - Example:
+     - **Hash Storage Address**: `0x0807F000`
+     - **Size**: 4 bytes
+
+3. **Validation Mechanism**:
+   - The hash of the new firmware is calculated and compared to the stored hash.
+   - If the hashes match, the firmware is considered up-to-date, and the update is skipped.
+   - If the hashes differ, the firmware is updated.
+
+---
+
+#### **Firmware Update Steps**
+1. **Check Firmware Hash**:
+   - On every boot, the hash of the currently running firmware is retrieved from Flash memory.
+   - The hash of the new firmware (provided during the update process) is compared to the stored hash.
+
+2. **Write Firmware to Flash**:
+   - If the firmware hash has changed:
+     - The new firmware binary is written to the reserved firmware slot in Flash memory.
+     - Flash writes are performed word-by-word (32 bits).
+
+3. **Validate Firmware**:
+   - After writing, the firmware's checksum is computed and compared with the expected checksum provided during the update process.
+   - If validation succeeds, the new firmware is stored in the firmware slot.
+
+4. **Store New Firmware Hash**:
+   - The hash of the new firmware is written to the reserved hash storage area in Flash.
+
+5. **Reboot to New Firmware**:
+   - If validation is successful, the system jumps to the new firmware by setting the **Main Stack Pointer (MSP)** and **Program Counter (PC)** to the new firmware's vector table.
+
+---
+
+#### **Code Workflow**
+
+1. **Check for Firmware Update**:
+   ```cpp
+   if (otwUpdater.checkAndUpdateFirmware(firmwareData, firmwareSizeActual, expectedChecksum)) {
+       Serial.println("Firmware updated successfully. Rebooting...");
+       otwUpdater.jumpToFirmware(firmwareSlotAddress);
+   } else {
+       Serial.println("No firmware update required.");
+   }
+   ```
+
+2. **Write Firmware to Flash**:
+   ```cpp
+   void OTWUpdate::writeToFlash(uint32_t startAddress, const uint8_t* data, uint32_t size) {
+       HAL_FLASH_Unlock();
+       for (uint32_t i = 0; i < size; i += 4) {
+           uint32_t word = *(uint32_t*)(data + i);
+           HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, startAddress + i, word);
+       }
+       HAL_FLASH_Lock();
+   }
+   ```
+
+3. **Validate Firmware**:
+   ```cpp
+   bool OTWUpdate::validateFirmware(uint32_t startAddress, uint32_t size, uint32_t expectedChecksum) {
+       uint32_t checksum = 0;
+       for (uint32_t i = 0; i < size; i += 4) {
+           checksum += *(uint32_t*)(startAddress + i);
+       }
+       return (checksum == expectedChecksum);
+   }
+   ```
+
+4. **Store New Firmware Hash**:
+   ```cpp
+   void OTWUpdate::storeFirmwareHash(uint32_t hash) {
+       HAL_FLASH_Unlock();
+       HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, hashStorageAddress, hash);
+       HAL_FLASH_Lock();
+   }
+   ```
+
+---
+
+#### **Advantages of Using Flash Memory**
+- **No External Storage**: Eliminates reliance on SD cards or external EEPROM.
+- **Efficient Validation**: Hash comparison ensures updates are only applied when necessary.
+- **Robustness**: Validation prevents corrupted firmware from being applied.
+
 
 ---
 
