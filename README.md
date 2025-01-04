@@ -245,6 +245,57 @@ This approach ensures that each STM32 device receives the correct firmware versi
 - **Scalability**: The directory structure naturally scales with the number of devices.
 
 ---
+Here’s a concise section describing how to use the Arduino IDE with STM32 and STCube Programmer:
+
+---
+
+### **Programming the STM32 with Arduino IDE and STCube Programmer**
+
+#### **Step 1: Install the STM32 Arduino Core**
+1. Open the Arduino IDE.
+2. Go to **File > Preferences**.
+3. In the **Additional Boards Manager URLs** field, add the STM32 URL:  
+   ```
+   https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
+   ```
+4. Go to **Tools > Board > Boards Manager**.
+5. Search for `STM32` and install the **STM32 MCU based boards** package.
+
+---
+
+#### **Step 2: Configure the STM32 Board**
+1. Go to **Tools > Board > STM32 Boards (selected core)** and select your board:
+   - Example: `Nucleo-144 > Nucleo H723ZG`.
+2. Configure the following in the **Tools** menu:
+   - **Board Part Number**: `Nucleo-H723ZG`.
+   - **Upload Method**: `STM32CubeProgrammer (SWD)`.
+   - **Port**: Choose the correct COM port for your board.
+
+---
+
+#### **Step 3: Install STCube Programmer**
+1. Download the STCube Programmer from the STMicroelectronics website:  
+   [STCube Programmer Download](https://www.st.com/en/development-tools/stm32cubeprog.html).
+2. Install and open the programmer.
+3. Ensure the STM32 board is connected to your PC via USB.
+
+---
+
+#### **Step 4: Write and Upload Code**
+1. Write your program in the Arduino IDE or open an example sketch.
+2. Click the **Upload** button in the Arduino IDE.
+   - The IDE will compile the sketch and upload it using the STM32CubeProgrammer.
+3. Monitor the Serial Output:
+   - Open the Serial Monitor (`Tools > Serial Monitor`) to view output from the STM32 board.
+
+---
+
+#### **Step 5: Debugging**
+- If the upload fails:
+  - Ensure the **BOOT0** pin on the STM32 is set correctly .
+  - Check connections and the selected port in the Arduino IDE.
+  - Use the STM32CubeProgrammer to manually erase the board or debug connection issues.
+
 
 
 ---
