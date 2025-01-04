@@ -16,7 +16,7 @@ The project ensures reliable communication and update mechanisms, providing an e
 
 #### **Features**
 1. **Ethernet Communication**:
-   - Configurable static IP or DHCP.
+   - Configurable static IP.
    - RMII interface setup for onboard Ethernet PHY.
 
 2. **Socket.IO Client**:
