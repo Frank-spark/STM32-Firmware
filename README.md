@@ -245,7 +245,7 @@ This approach ensures that each STM32 device receives the correct firmware versi
 - **Scalability**: The directory structure naturally scales with the number of devices.
 
 ---
-Here’s a concise section describing how to use the Arduino IDE with STM32 and STCube Programmer:
+
 
 ---
 
