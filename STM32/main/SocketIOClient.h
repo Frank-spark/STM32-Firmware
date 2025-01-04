@@ -7,15 +7,19 @@
 class SocketIOClient {
 public:
     SocketIOClient(const char* serverIP, uint16_t serverPort, const char* endpoint);
-    bool connect();
+    void begin();
     void loop();
-    void emit(const char* event, const JsonObject& payload);
+    String readEvent();
+    bool available();
 
 private:
     EthernetClient client;
     const char* serverIP;
     uint16_t serverPort;
     const char* endpoint;
+
+    void handleSocketEvents();
+    void rebootSTM32();
 };
 
 #endif // SOCKETIOCLIENT_H
