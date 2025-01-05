@@ -1,25 +1,23 @@
 #ifndef SOCKETIOCLIENT_H
 #define SOCKETIOCLIENT_H
 
-#include <EthernetClient.h>
 #include <ArduinoJson.h>
+#include <Ethernet_Generic.h>
+
+
 
 class SocketIOClient {
 public:
-    SocketIOClient(const char* serverIP, uint16_t serverPort, const char* endpoint);
-    void begin();
-    void loop();
-    String readEvent();
-    bool available();
+    SocketIOClient(const char* serverIP, uint16_t serverPort);
+    bool connect();
+    void monitor();
+    void on(const char* eventName, void (*callback)(const char* payload));
+    void emit(const char* eventName, const char* message);
 
 private:
-    EthernetClient client;
     const char* serverIP;
     uint16_t serverPort;
-    const char* endpoint;
-
-    void handleSocketEvents();
-    void rebootSTM32();
+    EthernetClient client;
 };
 
-#endif // SOCKETIOCLIENT_H
+#endif
