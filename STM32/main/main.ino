@@ -3,7 +3,7 @@
 #include <EEPROM.h>
 #include "OTWUpdate.h"
 #include "SocketIOClient.h"
-
+#include "EthernetSetup.h"
 // Create instances of required classes
 EthernetSetup ethernetSetup; // Declare the object
 OTWUpdate updater(0x08080000, 0x40000, 0x080C0000); // Provide slot address, size, and hash storage address 

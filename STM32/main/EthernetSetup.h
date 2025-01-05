@@ -7,7 +7,11 @@
 
 class EthernetSetup {
 public:
+    EthernetSetup();
     bool initialize();
+    IPAddress getLocalIP();
+
+
 
 
 private:
