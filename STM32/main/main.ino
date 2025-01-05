@@ -1,11 +1,12 @@
-#include "EthernetSetup.h"
-
-#include "OTWupdater.h"
+#include <Ethernet.h>
+#include <Ethernet_Generic.h>
+#include <EEPROM.h>
+#include "OTWUpdate.h"
 #include "SocketIOClient.h"
 
 // Create instances of required classes
 EthernetSetup ethernetSetup; // Declare the object
-OTWupdater updater(0x08080000, 0x40000, 0x080C0000); // Provide slot address, size, and hash storage address
+OTWUpdate updater(0x08080000, 0x40000, 0x080C0000); // Provide slot address, size, and hash storage address 
 SocketIOClient socketIO("192.168.1.200", 3000); // Provide server IP and port
 
 void setup() {

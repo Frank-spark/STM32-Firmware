@@ -2,11 +2,13 @@
 #define ETHERNETSETUP_H
 
 #include <Ethernet.h>
+#include <Ethernet_Generic.h>
+
 
 class EthernetSetup {
 public:
     bool initialize();
-};
+
 
 private:
     byte mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};

@@ -1,4 +1,6 @@
 #include "EthernetSetup.h"
+#include <Ethernet.h>
+#include <Ethernet_Generic.h>
 
 // Define the external ethernetSetup object
 EthernetSetup ethernetSetup;
