@@ -2,98 +2,107 @@
 
 ---
 
-### **Project: STM32 Nucleo-H723ZG Firmware with Ethernet, Socket.IO, and OTW Updates**
+# **STM32 Nucleo-H723ZG Firmware**
 
-#### **Overview**
-This project implements a firmware for the STM32 Nucleo-H723ZG development board that integrates:
-- **Ethernet communication** for network connectivity.
-- **Socket.IO** for real-time server interaction.
-- **Over-the-Wire (OTW) updates** for seamless firmware upgrades via an SD card.
+## **Overview**
 
-The project ensures reliable communication and update mechanisms, providing an extendable framework for IoT or industrial applications.
+This project implements firmware for the STM32 Nucleo-H723ZG development board, integrating:
 
----
+- **Ethernet Communication**: Provides network connectivity for IoT applications.
+- **Socket.IO Client**: Enables real-time interaction with a server.
+- **Over-the-Wire (OTW) Firmware Updates**: Supports seamless firmware updates directly written to Flash memory.
 
-#### **Features**
-1. **Ethernet Communication**:
-   - Configurable static IP.
-   - RMII interface setup for onboard Ethernet PHY.
-
-2. **Socket.IO Client**:
-   - Real-time communication with a server.
-   - JSON-based data exchange for control and monitoring.
-
-3. **Over-the-Wire Firmware Updates**:
-   - Firmware update using onboard flash.
-   - Hash validation to avoid unnecessary updates.
-   - Automatic reboot into the updated application firmware.
+This firmware provides a reliable and extendable framework for industrial and IoT applications, focusing on network communication and maintainability.
 
 ---
 
-#### **Requirements**
-- **Hardware**:
-  - STM32 Nucleo-H723ZG development board.
-  - Ethernet cable and a connected network.
-  - onboard flash for storing the firmware binary.
-- **Software**:
-  - STM32CubeIDE (or Arduino IDE for simpler integration).
-  - STM32 HAL and LL libraries (bundled with STM32CubeMX).
+## **Features**
+
+### 1. **Ethernet Communication**
+- Supports static IP configuration.
+- Initializes the Ethernet interface using the onboard RMII PHY.
+- Provides methods to retrieve the assigned IP address for debugging.
+
+### 2. **Socket.IO Client**
+- Implements basic Socket.IO functionality for real-time communication.
+- Emits and receives JSON-based messages.
+- Registers event-based callbacks for handling incoming server data.
+
+### 3. **Over-the-Wire Firmware Updates**
+- Firmware updates are directly written to the STM32's Flash memory.
+- Hash-based validation ensures only new firmware is applied.
+- Automatically reboots into the updated firmware after successful programming.
+- Supports validation of firmware size against the allocated Flash memory slot.
 
 ---
 
-#### **Pin Configuration**
-- **Ethernet RMII Interface**:
-  - `PA1`: RMII Reference Clock
-  - `PA2`: RMII MDIO
-  - `PA7`: RMII TXD0
-  - `PB11`: RMII TXD1
-  - `PB12`: RMII TXEN
-  - `PC1`: RMII MDC
-  - `PC4`: RMII RXD0
-  - `PC5`: RMII RXD1
-  - `PG11`: RMII CRS_DV
+## **Requirements**
 
+### **Hardware**
+- STM32 Nucleo-H723ZG development board.
+- Ethernet cable and a connected network.
+
+### **Software**
+- Arduino IDE or STM32CubeIDE for development.
+- STM32 HAL libraries (pre-configured via STM32CubeMX).
 
 ---
 
-#### **Setup Instructions**
-1. **Clone or Download the Repository**:
-   - Ensure all required source files (`OTWUpdate`, `EthernetSetup`, and `SocketIOClient`) are available.
+## **Pin Configuration**
 
-2. **Configure the Ethernet**:
-   - Update the `mac[]` and `ip` in `main.cpp` to match your network configuration.
-
-3. **Prepare the SD Card**:
-   - Place the firmware binary (`firmware.bin`) in the root directory of the SD card.
-
-4. **Compile and Flash**:
-   - Use STM32CubeIDE or Arduino IDE to compile and upload the firmware to the STM32 board.
-
-5. **Connect to Socket.IO Server**:
-   - Ensure the server is running at the configured `serverIP` and `serverPort`.
-
-6. **Monitor the Serial Output**:
-   - Use a serial monitor (e.g., Arduino Serial Monitor) to debug and verify firmware behavior.
+### **Ethernet RMII Interface**
+| **Pin** | **Function**    |
+|---------|-----------------|
+| PA1     | RMII Reference Clock |
+| PA2     | RMII MDIO       |
+| PA7     | RMII TXD0       |
+| PB11    | RMII TXD1       |
+| PB12    | RMII TXEN       |
+| PC1     | RMII MDC        |
+| PC4     | RMII RXD0       |
+| PC5     | RMII RXD1       |
+| PG11    | RMII CRS_DV     |
 
 ---
 
-#### **Usage**
-1. **Ethernet Communication**:
-   - The board initializes Ethernet on startup.
-   - Displays the assigned IP address via the serial console.
+## **Setup Instructions**
 
-2. **Socket.IO Real-Time Updates**:
-   - Communicates with the server for event-based data exchange.
-   - Emits and receives JSON payloads.
+1. **Clone the Repository**  
+   Ensure all source files (`OTWUpdate`, `EthernetSetup`, and `SocketIOClient`) are present.
 
-3. **Over-the-Wire Firmware Updates**:
-   - Checks the SD card for a new firmware file (`firmware.bin`).
-   - Validates the firmware using a hash and applies updates if required.
-   - Reboots automatically after a successful update.
+2. **Configure Ethernet**  
+   Update the `mac[]` and `ip` variables in the main file to match your network setup.
+
+3. **Compile and Flash**  
+   Use STM32CubeIDE or Arduino IDE to build and upload the firmware to the board.
+
+4. **Connect to a Socket.IO Server**  
+   Ensure the server is running at the configured `serverIP` and `serverPort`.
+
+5. **Monitor Serial Output**  
+   Use a serial monitor to view debugging logs and firmware behavior.
 
 ---
 
-#### **Project Structure**
+## **Usage**
+
+### **1. Ethernet Communication**
+- Ethernet is initialized on startup, and the assigned IP is displayed via the serial console.
+- Supports basic connectivity debugging.
+
+### **2. Socket.IO Real-Time Updates**
+- Enables communication with a server using JSON messages.
+- Provides event-based callbacks for handling specific server events.
+
+### **3. Over-the-Wire Firmware Updates**
+- Updates are written directly to Flash memory.
+- Validates firmware size and hash before programming.
+- Automatically reboots after successful updates.
+
+---
+
+## **Project Structure**
+
 ```
 STM32_Firmware_Project/
 ├── OTWUpdate.h           # Header for OTW firmware updates
@@ -103,308 +112,37 @@ STM32_Firmware_Project/
 ├── SocketIOClient.h      # Header for Socket.IO client
 ├── SocketIOClient.cpp    # Implementation of Socket.IO client
 ├── main.cpp              # Main application logic
-└── README.md             # Project documentation
+├── README.md             # Project documentation
 ```
-Using the static IP as the identifier simplifies the system and ensures each STM32 device is uniquely identified based on its assigned network address. Here’s an updated explanation for the Socket.IO server maintainers to implement firmware hosting using static IPs as the identifier.
 
 ---
 
-### **Firmware Hosting for STM32 Devices Using Static IPs**
+## **Known Limitations**
 
-#### **Overview**
-The Socket.IO server will identify STM32 devices based on their **static IP addresses**. Each device will:
-1. Request its firmware update by sending its static IP.
-2. Download the appropriate firmware file based on its IP.
+1. **Firmware Source Detection**  
+   The function `checkForNewFirmware` currently always returns `false`. Implement logic to detect new firmware in memory or over the network.
 
-This approach ensures that each STM32 device receives the correct firmware version for updates.
+2. **Socket.IO Event Handling**  
+   While basic event handling works, it needs expansion to support multiple dynamic events with robust parsing.
 
----
+3. **Ethernet Initialization Resilience**  
+   Ethernet setup lacks retry mechanisms. Add retries or timeouts for enhanced reliability.
 
-#### **Implementation on the Socket.IO Server**
-
-1. **Directory Structure for Firmware Files**:
-   - Organize firmware files using static IPs as directory names.
-   - Example directory structure:
-     ```
-     firmware/
-     ├── 192.168.1.100/
-     │   ├── firmware_v1.0.bin
-     │   └── firmware_v1.1.bin
-     ├── 192.168.1.101/
-     │   ├── firmware_v2.0.bin
-     │   └── firmware_v2.1.bin
-     └── 192.168.1.102/
-         ├── firmware_v3.0.bin
-         └── firmware_v3.1.bin
-     ```
-
-2. **Endpoint for Firmware Requests**:
-   - Define a REST API endpoint to serve firmware files based on the device's static IP.
-   - Example API route:
-     ```
-     GET /firmware/:ip/latest
-     ```
-   - The `ip` parameter corresponds to the device’s static IP.
-
-3. **Serving Firmware Based on IP**:
-   - Use the IP from the request to locate the firmware directory.
-   - Example in Node.js (Express):
-     ```javascript
-     const express = require('express');
-     const path = require('path');
-     const app = express();
-
-     // Define firmware directory
-     const firmwareDir = path.join(__dirname, 'firmware');
-
-     // Endpoint to get the latest firmware based on IP
-     app.get('/firmware/:ip/latest', (req, res) => {
-         const ip = req.params.ip.replace(/\./g, '_'); // Sanitize IP for folder name
-         const devicePath = path.join(firmwareDir, ip);
-
-         // Find the latest firmware file
-         const fs = require('fs');
-         fs.readdir(devicePath, (err, files) => {
-             if (err || !files || files.length === 0) {
-                 res.status(404).send('Firmware not found');
-                 return;
-             }
-
-             // Sort files to find the latest version (assumes versioned filenames)
-             const latestFirmware = files.sort().reverse()[0];
-             const firmwarePath = path.join(devicePath, latestFirmware);
-
-             // Send the firmware file
-             res.download(firmwarePath, latestFirmware, (err) => {
-                 if (err) {
-                     res.status(500).send('Error serving firmware');
-                 }
-             });
-         });
-     });
-
-     // Start the server
-     const PORT = 5000;
-     app.listen(PORT, () => {
-         console.log(`Firmware server running on port ${PORT}`);
-     });
-     ```
-
-4. **Socket.IO Communication**:
-   - Notify devices about available updates.
-   - Use the device’s IP to determine its firmware version.
-   - Example Socket.IO event:
-     ```javascript
-     io.on('connection', (socket) => {
-         socket.on('requestFirmwareUpdate', (data) => {
-             const { ip } = data; // Static IP of the STM32 device
-
-             // Check for firmware update
-             const firmwareAvailable = checkForFirmwareUpdate(ip); // Custom function
-             if (firmwareAvailable) {
-                 socket.emit('firmwareUpdate', {
-                     url: `http://your-server-ip:5000/firmware/${ip.replace(/\./g, '_')}/latest`,
-                 });
-             }
-         });
-     });
-     ```
-
-5. **STM32 Device Interaction**:
-   - Each STM32 device should:
-     1. Send its static IP to the Socket.IO server during connection.
-     2. Listen for the `firmwareUpdate` event containing the download URL.
-     3. Use the provided URL to download the firmware via HTTP.
+4. **Flash Write Validation**  
+   The Flash programming function does not verify the written data matches the input. Add verification to improve reliability.
 
 ---
 
-#### **Example Workflow**
-1. **Device Initialization**:
-   - STM32 device connects to the server using its static IP.
+## **Future Enhancements**
 
-2. **Update Request**:
-   - The device sends its static IP and checks for updates.
-
-3. **Firmware Distribution**:
-   - The server responds with the firmware URL if an update is available.
-
-4. **Firmware Download**:
-   - The STM32 device downloads and applies the firmware.
+- Add full detection logic for over-the-wire firmware updates.
+- Implement dynamic network configuration (e.g., DHCP or web-based settings).
+- Extend Socket.IO client functionality to support multiple endpoints and robust error handling.
 
 ---
 
-#### **Benefits of Using Static IPs**
-- **Simplicity**: No need to maintain additional identifiers.
-- **Reliability**: Static IPs are easy to configure and unique within the network.
-- **Scalability**: The directory structure naturally scales with the number of devices.
+## **License**
 
----
-Here’s an updated section for your `README.md` file, explaining how the firmware is updated and checked using the onboard Flash memory.
-
----
-
-### **Firmware Update Process**
-
-The firmware update mechanism leverages the STM32's onboard Flash memory to store and validate firmware during Over-the-Wire (OTW) updates. This ensures a robust and efficient update process without relying on external storage.
-
-#### **Key Components**
-1. **Firmware Slot**:
-   - A reserved area in the onboard Flash memory stores the new firmware during the update process.
-   - Example:
-     - **Firmware Slot Address**: `0x08080000`
-     - **Size**: 512 KB
-
-2. **Firmware Hash Storage**:
-   - A dedicated address in Flash memory stores the hash of the currently running firmware.
-   - Example:
-     - **Hash Storage Address**: `0x0807F000`
-     - **Size**: 4 bytes
-
-3. **Validation Mechanism**:
-   - The hash of the new firmware is calculated and compared to the stored hash.
-   - If the hashes match, the firmware is considered up-to-date, and the update is skipped.
-   - If the hashes differ, the firmware is updated.
-
----
-
-#### **Firmware Update Steps**
-1. **Check Firmware Hash**:
-   - On every boot, the hash of the currently running firmware is retrieved from Flash memory.
-   - The hash of the new firmware (provided during the update process) is compared to the stored hash.
-
-2. **Write Firmware to Flash**:
-   - If the firmware hash has changed:
-     - The new firmware binary is written to the reserved firmware slot in Flash memory.
-     - Flash writes are performed word-by-word (32 bits).
-
-3. **Validate Firmware**:
-   - After writing, the firmware's checksum is computed and compared with the expected checksum provided during the update process.
-   - If validation succeeds, the new firmware is stored in the firmware slot.
-
-4. **Store New Firmware Hash**:
-   - The hash of the new firmware is written to the reserved hash storage area in Flash.
-
-5. **Reboot to New Firmware**:
-   - If validation is successful, the system jumps to the new firmware by setting the **Main Stack Pointer (MSP)** and **Program Counter (PC)** to the new firmware's vector table.
-
----
-
-#### **Code Workflow**
-
-1. **Check for Firmware Update**:
-   ```cpp
-   if (otwUpdater.checkAndUpdateFirmware(firmwareData, firmwareSizeActual, expectedChecksum)) {
-       Serial.println("Firmware updated successfully. Rebooting...");
-       otwUpdater.jumpToFirmware(firmwareSlotAddress);
-   } else {
-       Serial.println("No firmware update required.");
-   }
-   ```
-
-2. **Write Firmware to Flash**:
-   ```cpp
-   void OTWUpdate::writeToFlash(uint32_t startAddress, const uint8_t* data, uint32_t size) {
-       HAL_FLASH_Unlock();
-       for (uint32_t i = 0; i < size; i += 4) {
-           uint32_t word = *(uint32_t*)(data + i);
-           HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, startAddress + i, word);
-       }
-       HAL_FLASH_Lock();
-   }
-   ```
-
-3. **Validate Firmware**:
-   ```cpp
-   bool OTWUpdate::validateFirmware(uint32_t startAddress, uint32_t size, uint32_t expectedChecksum) {
-       uint32_t checksum = 0;
-       for (uint32_t i = 0; i < size; i += 4) {
-           checksum += *(uint32_t*)(startAddress + i);
-       }
-       return (checksum == expectedChecksum);
-   }
-   ```
-
-4. **Store New Firmware Hash**:
-   ```cpp
-   void OTWUpdate::storeFirmwareHash(uint32_t hash) {
-       HAL_FLASH_Unlock();
-       HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, hashStorageAddress, hash);
-       HAL_FLASH_Lock();
-   }
-   ```
-
----
-
-#### **Advantages of Using Flash Memory**
-- **No External Storage**: Eliminates reliance on SD cards or external EEPROM.
-- **Efficient Validation**: Hash comparison ensures updates are only applied when necessary.
-- **Robustness**: Validation prevents corrupted firmware from being applied.
-
-
----
-
-
----
-
-### **Programming the STM32 with Arduino IDE and STCube Programmer**
-
-#### **Step 1: Install the STM32 Arduino Core**
-1. Open the Arduino IDE.
-2. Go to **File > Preferences**.
-3. In the **Additional Boards Manager URLs** field, add the STM32 URL:  
-   ```
-   https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
-   ```
-4. Go to **Tools > Board > Boards Manager**.
-5. Search for `STM32` and install the **STM32 MCU based boards** package.
-
----
-
-#### **Step 2: Configure the STM32 Board**
-1. Go to **Tools > Board > STM32 Boards (selected core)** and select your board:
-   - Example: `Nucleo-144 > Nucleo H723ZG`.
-2. Configure the following in the **Tools** menu:
-   - **Board Part Number**: `Nucleo-H723ZG`.
-   - **Upload Method**: `STM32CubeProgrammer (SWD)`.
-   - **Port**: Choose the correct COM port for your board.
-
----
-
-#### **Step 3: Install STCube Programmer**
-1. Download the STCube Programmer from the STMicroelectronics website:  
-   [STCube Programmer Download](https://www.st.com/en/development-tools/stm32cubeprog.html).
-2. Install and open the programmer.
-3. Ensure the STM32 board is connected to your PC via USB.
-
----
-
-#### **Step 4: Write and Upload Code**
-1. Write your program in the Arduino IDE or open an example sketch.
-2. Click the **Upload** button in the Arduino IDE.
-   - The IDE will compile the sketch and upload it using the STM32CubeProgrammer.
-3. Monitor the Serial Output:
-   - Open the Serial Monitor (`Tools > Serial Monitor`) to view output from the STM32 board.
-
----
-
-#### **Step 5: Debugging**
-- If the upload fails:
-  - Ensure the **BOOT0** pin on the STM32 is set correctly .
-  - Check connections and the selected port in the Arduino IDE.
-  - Use the STM32CubeProgrammer to manually erase the board or debug connection issues.
-
-
-
----
-
-#### **Future Enhancements**
-- Add support for multiple endpoints and events in the Socket.IO client.
-- Implement dynamic network configuration (e.g., using a web server).
-- Enhance OTW update mechanism with fallback capabilities.
-
----
-
-#### **License**
 This project is open-source and licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
