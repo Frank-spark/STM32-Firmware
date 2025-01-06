@@ -1,9 +1,47 @@
-#include "OTWupdate.h"
+#include "OTWUpdate.h"
 #include "stm32h7xx_hal.h"
-#include <Arduino.h>
-#include <EEPROM.h>
+
 OTWUpdate::OTWUpdate(uint32_t firmwareSlotAddress, uint32_t firmwareSize, uint32_t hashStorageAddress)
     : firmwareSlotAddress(firmwareSlotAddress), firmwareSize(firmwareSize), hashStorageAddress(hashStorageAddress) {}
+
+bool OTWUpdate::checkAndPerformUpdate() {
+    if (checkForNewFirmware()) {
+        Serial.println("[Info] New firmware detected.");
+        if (performUpdate()) {
+            Serial.println("[Info] Update successful. Rebooting...");
+            rebootToNewFirmware();
+            return true; // Successfully handled update
+        } else {
+            Serial.println("[Error] Update failed.");
+            return false;
+        }
+    }
+    return false; // No update found
+}
+
+void OTWUpdate::writeFirmwareToFlash(const uint8_t* data, uint32_t length) {
+    HAL_FLASH_Unlock();
+
+    for (uint32_t i = 0; i < length; i += 8) { // Program in 64-bit (8-byte) chunks
+        uint64_t flashWord = 0;
+
+        // Combine 8 bytes into a 64-bit value
+        for (uint8_t j = 0; j < 8 && (i + j) < length; j++) {
+            flashWord |= ((uint64_t)data[i + j] << (j * 8));
+        }
+
+        uint32_t address = firmwareSlotAddress + i;
+        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, address, flashWord) != HAL_OK) {
+            Serial.println("[Error] Flash programming failed.");
+            HAL_FLASH_Lock();
+            return;
+        }
+    }
+
+    HAL_FLASH_Lock();
+    Serial.println("[Info] Firmware written to Flash.");
+}
+
 
 bool OTWUpdate::checkAndUpdateFirmware(const uint8_t* firmwareData, uint32_t size, uint32_t expectedChecksum) {
     // Ensure size is within firmware slot limits
@@ -60,8 +98,3 @@ void OTWUpdate::rebootToNewFirmware() {
     NVIC_SystemReset(); // STM32-specific system reset
 }
 
-void OTWUpdate::writeFirmwareToFlash(const uint8_t* data, uint32_t length) {
-    for (uint32_t i = 0; i < length; i++) {
-        EEPROM.write(firmwareSlotAddress + i, data[i]);
-    }
-}
