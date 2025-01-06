@@ -2,9 +2,7 @@
 #define SOCKETIOCLIENT_H
 
 #include <ArduinoJson.h>
-#include <Ethernet_Generic.h>
-
-
+#include <Ethernet.h> // Include the Ethernet library (or WiFi if applicable)
 
 class SocketIOClient {
 public:
@@ -17,7 +15,7 @@ public:
 private:
     const char* serverIP;
     uint16_t serverPort;
-    EthernetClient client;
+    EthernetClient client; // Declare the client object here
 };
 
 #endif

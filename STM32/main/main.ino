@@ -1,13 +1,18 @@
+#include <Arduino.h>
 #include <Ethernet.h>
-#include <Ethernet_Generic.h>
 #include <EEPROM.h>
 #include "OTWUpdate.h"
 #include "SocketIOClient.h"
 #include "EthernetSetup.h"
+
+// Ethernet configuration
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; // Replace with your MAC address
+IPAddress ip(192, 168, 1, 177);                    // Replace with your static IP
+
 // Create instances of required classes
-EthernetSetup ethernetSetup; // Declare the object
+EthernetSetup ethernetSetup(mac, ip); // Declare the object with parameters
 OTWUpdate updater(0x08080000, 0x40000, 0x080C0000); // Provide slot address, size, and hash storage address 
-SocketIOClient socketIO("192.168.1.200", 3000); // Provide server IP and port
+SocketIOClient socketIO("192.168.1.200", 3000); //
 
 void setup() {
     Serial.begin(115200);

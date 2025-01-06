@@ -1,9 +1,6 @@
 #include "EthernetSetup.h"
-#include <Ethernet.h>
-#include <Ethernet_Generic.h>
 
-// Define the external ethernetSetup object
-EthernetSetup ethernetSetup;
+EthernetSetup::EthernetSetup(byte* mac, IPAddress ip) : mac(mac), ip(ip) {}
 
 bool EthernetSetup::initialize() {
     Serial.println("[Info] Initializing Ethernet...");
@@ -17,4 +14,8 @@ bool EthernetSetup::initialize() {
     Serial.print("[Info] Ethernet initialized with IP: ");
     Serial.println(Ethernet.localIP());
     return true;
+}
+
+IPAddress EthernetSetup::getLocalIP() {
+    return Ethernet.localIP();
 }
