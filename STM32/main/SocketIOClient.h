@@ -2,7 +2,7 @@
 #define SOCKETIOCLIENT_H
 
 #include <ArduinoJson.h>
-#include <Ethernet.h> // Include the Ethernet library (or WiFi if applicable)
+#include <Ethernet.h> // Include the Ethernet library
 
 class SocketIOClient {
 public:
@@ -15,7 +15,16 @@ public:
 private:
     const char* serverIP;
     uint16_t serverPort;
-    EthernetClient client; // Declare the client object here
+    EthernetClient client; // Ethernet client for communication
+    struct EventCallback {
+        const char* eventName;
+        void (*callback)(const char* payload);
+    };
+    static constexpr size_t MAX_EVENTS = 10;
+    EventCallback callbacks[MAX_EVENTS];
+    size_t callbackCount;
+
+    void handleIncomingMessage(const String& message);
 };
 
 #endif
