@@ -34,7 +34,7 @@ The project ensures reliable communication and update mechanisms, providing an e
 - **Hardware**:
   - STM32 Nucleo-H723ZG development board.
   - Ethernet cable and a connected network.
-  - SD card for storing the firmware binary.
+  - onboard flash for storing the firmware binary.
 - **Software**:
   - STM32CubeIDE (or Arduino IDE for simpler integration).
   - STM32 HAL and LL libraries (bundled with STM32CubeMX).
@@ -52,13 +52,7 @@ The project ensures reliable communication and update mechanisms, providing an e
   - `PC4`: RMII RXD0
   - `PC5`: RMII RXD1
   - `PG11`: RMII CRS_DV
-- **SDMMC Interface**:
-  - `PC8`: SDMMC1 D0
-  - `PC9`: SDMMC1 D1
-  - `PC10`: SDMMC1 D2
-  - `PC11`: SDMMC1 D3
-  - `PC12`: SDMMC1 CLK
-  - `PD2`: SDMMC1 CMD
+
 
 ---
 
